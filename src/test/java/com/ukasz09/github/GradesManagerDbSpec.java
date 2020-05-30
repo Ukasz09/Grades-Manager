@@ -104,54 +104,63 @@ public class GradesManagerDbSpec {
             public void whenSubjectAddThenInvokeMongoCollectionInsert() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                Subject subject = new Subject("Biology");
+                Subject subject = new Subject("Biology", dbSpy);
                 dbSpy.add(subject);
-                verify(jongoMock, times(1)).insert(subject);
+                verify(jongoMock, times(1)).insert(anyString(), anyString());
             }
 
             @Test
             public void whenSubjectAddToEmptyCollectionThenTrue() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                assertTrue(dbSpy.add(new Subject("Biology")));
+                assertTrue(dbSpy.add(new Subject("Biology", dbSpy)));
             }
 
             @Test
             public void givenExceptionWhenAddSubjectThenFalse() {
-                doThrow(new MongoException("bla")).when(jongoMock).insert(any(Subject.class));
+                doThrow(new MongoException("bla")).when(jongoMock).insert(anyString(), anyString());
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                assertFalse(dbSpy.add(new Subject("Biology")));
+                assertFalse(dbSpy.add(new Subject("Biology", dbSpy)));
             }
 
-
             @Test
-            public void givenOneSubjectInCollectionWhenAddDifferentSubjectThenTrue() {
+            public void given1SubjectInCollectionWhenAddDifferentSubjectThenTrue() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                dbSpy.add(new Subject("Biology"));
-                assertTrue(dbSpy.add(new Subject("Math")));
+                dbSpy.add(new Subject("Biology", dbSpy));
+                assertTrue(dbSpy.add(new Subject("Math", dbSpy)));
             }
 
-
             @Test
-            public void givenOneSubjectInCollectionWhenAddTheSameSubjectThenFalse() {
+            public void given1SubjectInCollectionWhenAddTheSameSubjectThenFalse() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
-                dbSpy.add(new Subject("Biology"));
-                assertFalse(dbSpy.add(new Subject("Biology")));
+                dbSpy.add(new Subject("Biology", dbSpy));
+                assertFalse(dbSpy.add(new Subject("Biology", dbSpy)));
             }
         }
 
         @Nested
         class Grades {
             @Test
+            public void whenGradesAddThenInvokeMongoCollectionUpdate() {
+                doReturn(true).when(dbSpy).existInDb(any(Student.class));
+                doReturn(true).when(dbSpy).existInDb(any(Subject.class));
+                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), anyString(), anyString());
+                Student student = new Student("John", "Kennedy", dbSpy);
+                Subject subject = new Subject("Biology", dbSpy);
+                dbSpy.addGrade(student, subject, 4);
+                verify(jongoMock, times(1)).update(anyString(), anyString(), anyString());
+            }
+
+            @Test
             public void whenAddGradeForNotExistingStudentThenFalse() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
-                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), any(Object.class));
+                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), anyString(), anyString());
                 Student student = new Student("John", "Carter", dbSpy);
-                Subject subject = new Subject("Biology");
+                Subject subject = new Subject("Biology", dbSpy);
                 assertFalse(dbSpy.addGrade(student, subject, 2));
             }
 
@@ -159,9 +168,9 @@ public class GradesManagerDbSpec {
             public void whenAddGradeForNotExistingSubjectThenFalse() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), any(Object.class));
+                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), anyString(), anyString());
                 Student student = new Student("John", "Carter", dbSpy);
-                Subject subject = new Subject("Biology");
+                Subject subject = new Subject("Biology", dbSpy);
                 assertFalse(dbSpy.addGrade(student, subject, 2));
             }
 
@@ -169,10 +178,10 @@ public class GradesManagerDbSpec {
             public void whenAddGradeWithCorrectDataTheTrue() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
-                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), any(Object.class));
+                doReturn(mock(Update.class)).when(jongoMock).update(anyString(), anyString(), anyString());
                 Student student = new Student("John", "Carter", dbSpy);
-                Subject subject = new Subject("Biology");
-                assertTrue(dbSpy.addGrade(student, subject, 2));
+                Subject subject = new Subject("Biology", dbSpy);
+                assertTrue(dbSpy.addGrade(student, subject, 3));
             }
         }
     }
@@ -226,30 +235,30 @@ public class GradesManagerDbSpec {
                 doThrow(new MongoException("bla")).when(jongoMock).remove(anyString());
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                assertFalse(dbSpy.delete(new Subject("Biology")));
+                assertFalse(dbSpy.delete(new Subject("Biology", dbSpy)));
             }
 
             @Test
             public void givenEmptyCollectionWhenDeleteSubjectThenFalse() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                assertFalse(dbSpy.delete(new Subject("Biology")));
+                assertFalse(dbSpy.delete(new Subject("Biology", dbSpy)));
             }
 
             @Test
             public void givenOneSubjectInCollectionWhenDeleteDifferentSubjectThenFalse() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
-                dbSpy.add(new Subject("Biology"));
-                assertFalse(dbSpy.delete(new Subject("Math")));
+                dbSpy.add(new Subject("Biology", dbSpy));
+                assertFalse(dbSpy.delete(new Subject("Math", dbSpy)));
             }
 
             @Test
             public void givenOneSubjectInCollectionWhenDeleteThisSubjectThenTrue() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
-                dbSpy.add(new Subject("Biology"));
-                assertTrue(dbSpy.delete(new Subject("Biology")));
+                dbSpy.add(new Subject("Biology", dbSpy));
+                assertTrue(dbSpy.delete(new Subject("Biology", dbSpy)));
             }
         }
     }
@@ -304,28 +313,36 @@ public class GradesManagerDbSpec {
         @Test
         public void givenGradesNullThen0() {
             doReturn(null).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
-            assertEquals(0d, dbSpy.avgGrade(new Student("John", "Carter", dbSpy), new Subject("Biology")));
+            Subject subject = new Subject("Biology", dbSpy);
+            Student student = new Student("John", "Carter", dbSpy);
+            assertEquals(0d, dbSpy.avgGrade(student, subject));
         }
 
         @Test
         public void given1GradeWhenAvgThenThis1Grade() {
             ArrayList<Integer> mockedGrades = new ArrayList<>(Collections.singletonList(3));
             doReturn(mockedGrades).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
-            assertEquals(3d, dbSpy.avgGrade(new Student("John", "Carter", dbSpy), new Subject("Biology")));
+            Subject subject = new Subject("Biology", dbSpy);
+            Student student = new Student("John", "Carter", dbSpy);
+            assertEquals(3d, dbSpy.avgGrade(student, subject));
         }
 
         @Test
         public void given3TheSameGradesFromSubjectWhenAvgThenGivenGrade() {
             ArrayList<Integer> mockedGrades = new ArrayList<>(Arrays.asList(2, 2, 2));
             doReturn(mockedGrades).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
-            assertEquals(2d, dbSpy.avgGrade(new Student("John", "Carter", dbSpy), new Subject("Math")));
+            Subject subject = new Subject("Biology", dbSpy);
+            Student student = new Student("John", "Carter", dbSpy);
+            assertEquals(2d, dbSpy.avgGrade(student, subject));
         }
 
         @Test
         public void given3GradesFromSubjectWhenAvgThenProperResult() {
             ArrayList<Integer> mockedGrades = new ArrayList<>(Arrays.asList(3, 2, 5));
             doReturn(mockedGrades).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
-            assertEquals(10d / 3d, dbSpy.avgGrade(new Student("John", "Carter", dbSpy), new Subject("Math")));
+            Subject subject = new Subject("Biology", dbSpy);
+            Student student = new Student("John", "Carter", dbSpy);
+            assertEquals(10d / 3d, dbSpy.avgGrade(student, subject));
         }
     }
 }

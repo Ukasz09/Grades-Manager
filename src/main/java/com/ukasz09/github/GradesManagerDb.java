@@ -51,7 +51,7 @@ public class GradesManagerDb {
     public boolean add(Subject subject) {
         try {
             if (!existInDb(subject)) {
-                getSubjectsCollection().insert(subject);
+                getSubjectsCollection().insert("{name: #}", subject.getName());
                 return true;
             }
             return false;

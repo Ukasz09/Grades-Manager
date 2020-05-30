@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //----------------------------------------------------------------------------------------------------------------//
 //  IMPORTANT: assuming that: given MongoDB running, to every test
@@ -34,26 +35,26 @@ public class StudentInteg {
         }
 
         @Test
-        public void givenStudentInCollectionWhenAddTheSameStudentThenFalse() {
+        public void given1StudentInCollectionWhenAddTheSameStudentThenFalse() {
             new Student("John", "Carter", dbManager).add();
             assertFalse(new Student("John", "Carter", dbManager).add());
         }
 
         @Test
         public void givenNotEmptyCollectionWhenAddDifferentStudentThenTrue() {
-            new Student("John", "Carter", dbManager).add();
-            new Student("Will", "Smith", dbManager).add();
+            assertTrue(new Student("John", "Carter", dbManager).add());
+            assertTrue(new Student("Will", "Smith", dbManager).add());
             assertTrue(new Student("Penelope", "Cruz", dbManager).add());
         }
 
         @Test
-        public void givenNotEmptyCollectionWhenAddStudentWithTheSameNameThenTrue() {
+        public void givenNotEmptyCollectionWhenAddStudentWithOnlyTheSameNameThenTrue() {
             new Student("John", "Carter", dbManager).add();
             assertTrue(new Student("Johny", "Dicaprio", dbManager).add());
         }
 
         @Test
-        public void givenNotEmptyCollectionWhenAddStudentWithTheSameSurnameThenTrue() {
+        public void givenNotEmptyCollectionWhenAddStudentWithTheOnlySameSurnameThenTrue() {
             new Student("John", "Carter", dbManager).add();
             assertTrue(new Student("Eleonore", "Carter", dbManager).add());
         }

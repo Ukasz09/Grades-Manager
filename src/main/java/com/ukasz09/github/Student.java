@@ -1,8 +1,11 @@
 package com.ukasz09.github;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class Student extends Entity {
+    private static final Pattern PATTERN = Pattern.compile("[A-Z][a-zA-Z]+");
+
     private String name;
     private String surname;
     private GradesManagerDb dbManager;
@@ -47,6 +50,8 @@ public class Student extends Entity {
 
     @Override
     public boolean add() {
-        return dbManager.add(this);
+        if (PATTERN.matcher(name).matches() && PATTERN.matcher(surname).matches())
+            return dbManager.add(this);
+        return false;
     }
 }
