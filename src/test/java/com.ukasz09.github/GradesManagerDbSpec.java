@@ -102,14 +102,59 @@ public class GradesManagerDbSpec {
             gradesManagerDb.add(new Subject("Biology"));
             assertTrue(gradesManagerDb.add(new Subject("Math")));
         }
+
+        @Test
+        public void givenExceptionWhenDeleteStudentThenFalse() {
+            doThrow(new MongoException("bla")).when(jongoMock).remove(anyString());
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            assertFalse(gradesManagerDb.delete(new Student("John", "Carter")));
+        }
+
+        @Test
+        public void givenExceptionWhenDeleteSubjectThenFalse() {
+            doThrow(new MongoException("bla")).when(jongoMock).remove(anyString());
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            assertFalse(gradesManagerDb.delete(new Subject("Biology")));
+        }
+
+        @Test
+        public void givenEmptyCollectionWhenDeleteStudentThenFalse() {
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            assertFalse(gradesManagerDb.delete(new Student("Josh", "Carter")));
+        }
+
+        @Test
+        public void givenEmptyCollectionWhenDeleteSubjectThenFalse() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            assertFalse(gradesManagerDb.delete(new Subject("Biology")));
+        }
+
+        @Test
+        public void givenOneStudentInCollectionWhenDeleteDifferentStudentThenFalse() {
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            gradesManagerDb.add(new Student("Josh", "Carter"));
+            assertFalse(gradesManagerDb.delete(new Student("Mike", "Spencer")));
+        }
+
+        @Test
+        public void givenOneSubjectInCollectionWhenDeleteDifferentSubjectThenFalse() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            gradesManagerDb.add(new Subject("Biology"));
+            assertFalse(gradesManagerDb.delete(new Subject("Math")));
+        }
     }
 
     @Nested
     class WhenExistInDbIsTrue {
+        @BeforeEach
+        public void initializeCollection() {
+            doReturn(true).when(gradesManagerDb).existInDb(any(Student.class));
+            doReturn(true).when(gradesManagerDb).existInDb(any(Subject.class));
+        }
+
         @Test
         public void givenOneStudentInCollectionWhenAddTheSameStudentThenFalse() {
             doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
-            doReturn(true).when(gradesManagerDb).existInDb(any(Student.class));
             gradesManagerDb.add(new Student("Josh", "Carter"));
             assertFalse(gradesManagerDb.add(new Student("Josh", "Carter")));
         }
@@ -117,9 +162,23 @@ public class GradesManagerDbSpec {
         @Test
         public void givenOneSubjectInCollectionWhenAddTheSameSubjectThenFalse() {
             doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
-            doReturn(true).when(gradesManagerDb).existInDb(any(Subject.class));
             gradesManagerDb.add(new Subject("Biology"));
             assertFalse(gradesManagerDb.add(new Subject("Biology")));
+        }
+
+        @Test
+        public void givenOneStudentInCollectionWhenDeleteThisStudentThenTrue() {
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            gradesManagerDb.add(new Student("Josh", "Carter"));
+            assertTrue(gradesManagerDb.delete(new Student("Josh", "Carter")));
+        }
+
+
+        @Test
+        public void givenOneSubjectInCollectionWhenDeleteThisSubjectThenTrue() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            gradesManagerDb.add(new Subject("Biology"));
+            assertTrue(gradesManagerDb.delete(new Subject("Biology")));
         }
     }
 }

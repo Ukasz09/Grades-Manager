@@ -69,4 +69,22 @@ public class GradesManagerDb {
         Subject result = getSubjectsCollection().findOne(query, subject.getName()).as(Subject.class);
         return result != null;
     }
+
+    public boolean delete(Student student) {
+        if (existInDb(student)) {
+            String query = "{name: '#', surname: '#'}";
+            getStudentsCollection().remove(query, student.getName(), student.getSurname());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean delete(Subject subject) {
+        if (existInDb(subject)) {
+            String query = "{name: '#'}";
+            getSubjectsCollection().remove(query, subject.getName());
+            return true;
+        }
+        return false;
+    }
 }
