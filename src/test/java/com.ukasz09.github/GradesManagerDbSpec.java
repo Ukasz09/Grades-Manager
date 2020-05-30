@@ -29,25 +29,6 @@ public class GradesManagerDbSpec {
         }
 
         @Test
-        public void whenInstantiatedThenMongoHasProperDbName() {
-            gradesManagerDb = new GradesManagerDb();
-            assertEquals(GradesManagerDb.DATABASE_NAME, gradesManagerDb.getStudentsCollection().getDBCollection().getDB().getName());
-            assertEquals(GradesManagerDb.DATABASE_NAME, gradesManagerDb.getSubjectsCollection().getDBCollection().getDB().getName());
-        }
-
-        @Test
-        public void whenInstantiatedThenMongoStudentsCollectionHasProperName() {
-            gradesManagerDb = new GradesManagerDb();
-            assertEquals(GradesManagerDb.STUDENTS_COLLECTION_NAME, gradesManagerDb.getStudentsCollection().getDBCollection().getName());
-        }
-
-        @Test
-        public void whenInstantiatedThenMongoSubjectsCollectionHasProperName() {
-            gradesManagerDb = new GradesManagerDb();
-            assertEquals(GradesManagerDb.SUBJECTS_COLLECTION_NAME, gradesManagerDb.getSubjectsCollection().getDBCollection().getName());
-        }
-
-        @Test
         public void whenStudentAddThenInvokeMongoCollectionInsert() {
             doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
             Student student = new Student("Josh", "Carter");
@@ -179,6 +160,57 @@ public class GradesManagerDbSpec {
             doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
             gradesManagerDb.add(new Subject("Biology"));
             assertTrue(gradesManagerDb.delete(new Subject("Biology")));
+        }
+    }
+
+    @Nested
+    class WhenNotUsedExistInDb {
+        @Test
+        public void whenInstantiatedThenMongoHasProperDbName() {
+            gradesManagerDb = new GradesManagerDb();
+            assertEquals(GradesManagerDb.DATABASE_NAME, gradesManagerDb.getStudentsCollection().getDBCollection().getDB().getName());
+            assertEquals(GradesManagerDb.DATABASE_NAME, gradesManagerDb.getSubjectsCollection().getDBCollection().getDB().getName());
+        }
+
+        @Test
+        public void whenInstantiatedThenMongoStudentsCollectionHasProperName() {
+            gradesManagerDb = new GradesManagerDb();
+            assertEquals(GradesManagerDb.STUDENTS_COLLECTION_NAME, gradesManagerDb.getStudentsCollection().getDBCollection().getName());
+        }
+
+        @Test
+        public void whenInstantiatedThenMongoSubjectsCollectionHasProperName() {
+            gradesManagerDb = new GradesManagerDb();
+            assertEquals(GradesManagerDb.SUBJECTS_COLLECTION_NAME, gradesManagerDb.getSubjectsCollection().getDBCollection().getName());
+        }
+
+
+        @Test
+        public void givenCollectionSize2WhenCountStudentThen2() {
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            doReturn(2L).when(jongoMock).count();
+            assertEquals(2, gradesManagerDb.countStudents());
+        }
+
+        @Test
+        public void givenCollectionSize2WhenCountSubjectsThen2() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            doReturn(2L).when(jongoMock).count();
+            assertEquals(2, gradesManagerDb.countSubjects());
+        }
+
+        @Test
+        public void givenEmptyCollectionWhenCountStudentThen0() {
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            doReturn(0L).when(jongoMock).count(anyString());
+            assertEquals(0, gradesManagerDb.countStudents());
+        }
+
+        @Test
+        public void givenEmptyCollectionWhenCountSubjectsThen0() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            doReturn(0L).when(jongoMock).count(anyString());
+            assertEquals(0, gradesManagerDb.countSubjects());
         }
     }
 }

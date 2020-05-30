@@ -87,4 +87,13 @@ public class GradesManagerDb {
         }
         return false;
     }
+
+    public long countStudents() {
+        return getStudentsCollection().count();
+    }
+
+
+    public long countSubjects() {
+        return getSubjectsCollection().count();
+    }
 }
