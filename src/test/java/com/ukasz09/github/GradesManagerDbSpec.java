@@ -26,7 +26,7 @@ public class GradesManagerDbSpec {
     }
 
     @Nested
-    class InstantiatingDatabase {
+    class InstantiatingAndDroppingDatabase {
         @Test
         public void whenInstantiatedThenMongoHasProperDbName() {
             dbSpy = new GradesManagerDb();
@@ -63,7 +63,7 @@ public class GradesManagerDbSpec {
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
                 Student student = new Student("Josh", "Carter", dbSpy);
                 dbSpy.add(student);
-                verify(jongoMock, times(1)).insert(student);
+                verify(jongoMock, times(1)).insert(anyString(), anyString(), anyString());
             }
 
             @Test
@@ -75,7 +75,7 @@ public class GradesManagerDbSpec {
 
             @Test
             public void givenExceptionWhenAddStudentThenFalse() {
-                doThrow(new MongoException("bla")).when(jongoMock).insert(any(Student.class));
+                doThrow(new MongoException("bla")).when(jongoMock).insert(anyString(), anyString(), anyString());
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
                 assertFalse(dbSpy.add(new Student("John", "Carter", dbSpy)));
