@@ -2,7 +2,7 @@ package com.ukasz09.github;
 
 import java.util.Objects;
 
-public class Student{
+public class Student {
     private String name;
     private String surname;
 
@@ -33,5 +33,13 @@ public class Student{
     @Override
     public int hashCode() {
         return Objects.hash(name, surname);
+    }
+
+    public boolean addGrade(Subject subject, int i) {
+        if (Subject.AVAILABLE_GRADES.contains(i)) {
+            // TODO: 30.05.2020 add connection with db
+            return true;
+        }
+        return false;
     }
 }

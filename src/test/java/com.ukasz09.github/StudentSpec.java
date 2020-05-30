@@ -33,4 +33,14 @@ public class StudentSpec {
         Student s2 = new Student("John", "Carter");
         assertEquals(s1, s2);
     }
+
+    @Test
+    public void whenAddGradeWithIncorrectGradeValueThenFalse() {
+        Student student = new Student("John", "Carter");
+        Subject subject = new Subject("Biology");
+        assertFalse(student.addGrade(subject, 1));
+        assertFalse(student.addGrade(subject, 6));
+        assertFalse(student.addGrade(subject, -2));
+        assertFalse(student.addGrade(subject, 0));
+    }
 }

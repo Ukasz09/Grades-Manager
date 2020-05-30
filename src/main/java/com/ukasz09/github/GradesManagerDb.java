@@ -82,8 +82,9 @@ public class GradesManagerDb {
 
     public boolean delete(Subject subject) {
         if (existInDb(subject)) {
-            String query = "{name: '#'}";
-            getSubjectsCollection().remove(query, subject.getName());
+            String subjQuery = "{name: '#'}";
+            getSubjectsCollection().remove(subjQuery, subject.getName());
+            getStudentsCollection().remove("{grades: #}", subject.getName());
             return true;
         }
         return false;
@@ -93,19 +94,15 @@ public class GradesManagerDb {
         return getStudentsCollection().count();
     }
 
-
     public long countSubjects() {
         return getSubjectsCollection().count();
     }
 
     public boolean addGrade(Student student, Subject subject, int grade) {
         if (existInDb(student) && existInDb(subject)) {
-            String query = "{name: '#', surname: '#'}";
-
-            MongoCollection studCol=getStudentsCollection();
-            Update utest= studCol
-                    .update(query, student.getName(), student.getSurname());
-                    utest.with("{$push: {grades: #}}", grade);
+            String idQuery = "{name: '#', surname: '#'}";
+            String pushQuery = "{$push: {grades: {#:#}}}";
+            getStudentsCollection().update(idQuery, student.getName(), student.getSurname()).with(pushQuery, subject.getName(), grade);
             return true;
         }
         return false;
