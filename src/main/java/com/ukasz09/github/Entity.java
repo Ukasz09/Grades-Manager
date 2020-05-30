@@ -1,4 +1,8 @@
 package com.ukasz09.github;
 
-public class Entity {
+public abstract class Entity {
+    protected GradesManagerDb dbManager = new GradesManagerDb();
+
+    //----------------------------------------------------------------------------------------------------------------//
+    public abstract boolean add();
 }

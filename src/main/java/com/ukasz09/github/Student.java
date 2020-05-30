@@ -2,7 +2,7 @@ package com.ukasz09.github;
 
 import java.util.Objects;
 
-public class Student {
+public class Student{
     private String name;
     private String surname;
 
@@ -11,7 +11,6 @@ public class Student {
         this.name = name;
         this.surname = surname;
     }
-
 
     //----------------------------------------------------------------------------------------------------------------//
     public String getName() {
