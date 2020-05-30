@@ -5,7 +5,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import org.jongo.Update;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class GradesManagerDb {
     protected static final String DATABASE_NAME = "GradesManager";
@@ -31,7 +33,6 @@ public class GradesManagerDb {
 
     }
 
-    // TODO: 30.05.2020 : merge ?
     public boolean add(Student student) {
         try {
             if (!existInDb(student)) {
@@ -58,7 +59,6 @@ public class GradesManagerDb {
         }
     }
 
-    // TODO: 30.05.2020 integration test
     protected boolean existInDb(Student student) {
         String query = "{name: '#', surname: '#'}";
         Student result = getStudentsCollection().findOne(query, student.getName(), student.getSurname()).as(Student.class);
@@ -106,5 +106,28 @@ public class GradesManagerDb {
             return true;
         }
         return false;
+    }
+
+    protected Iterable<Integer> getGrades(Student student, Subject subject) {
+        if (existInDb(student) && existInDb(subject)) {
+            String query = "{name: '#', surname: '#',grades:{#}}";
+            return getStudentsCollection().find(query, student.getName(), student.getSurname(), subject.getName()).as(Integer.class);
+        }
+        return null;
+    }
+
+    public double avgGrade(Student student, Subject subject) {
+        Iterable<Integer> grades = getGrades(student, subject);
+        if (grades != null) {
+            double sum = 0;
+            int qty = 0;
+            for (Integer grade : grades) {
+                sum += grade;
+                qty++;
+            }
+
+            return qty == 0 ? 0d : sum / qty;
+        }
+        return 0d;
     }
 }

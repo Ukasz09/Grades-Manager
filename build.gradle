@@ -21,9 +21,15 @@ dependencies {
 }
 
 test {
-//    filter {
-//        includeTestsMatching "*Spec"
-//    }
+    include '**/*Spec.class'
+    testLogging {
+        events = ["passed", "failed", "skipped"]
+    }
+    useJUnitPlatform()
+}
+
+task testInteg(type: Test) {
+    include '**/*Integ.class'
     testLogging {
         events = ["passed", "failed", "skipped"]
     }

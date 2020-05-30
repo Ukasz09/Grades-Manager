@@ -2,14 +2,16 @@ package com.ukasz09.github;
 
 import java.util.Objects;
 
-public class Student {
+public class Student extends Entity {
     private String name;
     private String surname;
+    private GradesManagerDb dbManager;
 
     //----------------------------------------------------------------------------------------------------------------//
-    public Student(String name, String surname) {
+    public Student(String name, String surname, GradesManagerDb dbManager) {
         this.name = name;
         this.surname = surname;
+        this.dbManager = dbManager;
     }
 
     //----------------------------------------------------------------------------------------------------------------//
@@ -41,5 +43,10 @@ public class Student {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean add() {
+        return dbManager.add(this);
     }
 }
