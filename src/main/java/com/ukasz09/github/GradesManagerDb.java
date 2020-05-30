@@ -5,6 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
+import org.jongo.Update;
 
 public class GradesManagerDb {
     protected static final String DATABASE_NAME = "GradesManager";
@@ -95,5 +96,18 @@ public class GradesManagerDb {
 
     public long countSubjects() {
         return getSubjectsCollection().count();
+    }
+
+    public boolean addGrade(Student student, Subject subject, int grade) {
+        if (existInDb(student) && existInDb(subject)) {
+            String query = "{name: '#', surname: '#'}";
+
+            MongoCollection studCol=getStudentsCollection();
+            Update utest= studCol
+                    .update(query, student.getName(), student.getSurname());
+                    utest.with("{$push: {grades: #}}", grade);
+            return true;
+        }
+        return false;
     }
 }

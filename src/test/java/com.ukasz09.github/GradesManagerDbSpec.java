@@ -1,7 +1,9 @@
 package com.ukasz09.github;
 
 import com.mongodb.MongoException;
+import com.mongodb.WriteResult;
 import org.jongo.MongoCollection;
+import org.jongo.Update;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -154,12 +156,21 @@ public class GradesManagerDbSpec {
             assertTrue(gradesManagerDb.delete(new Student("Josh", "Carter")));
         }
 
-
         @Test
         public void givenOneSubjectInCollectionWhenDeleteThisSubjectThenTrue() {
             doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
             gradesManagerDb.add(new Subject("Biology"));
             assertTrue(gradesManagerDb.delete(new Subject("Biology")));
+        }
+
+        @Test
+        public void whenAddGradeWithCorrectDataTheTrue() {
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            doReturn(mock(Update.class)).when(jongoMock).update(anyString(), any(Object.class));
+            Student student = new Student("John", "Carter");
+            Subject subject = new Subject("Biology");
+            assertTrue(gradesManagerDb.addGrade(student, subject, 2));
         }
     }
 
@@ -183,7 +194,6 @@ public class GradesManagerDbSpec {
             gradesManagerDb = new GradesManagerDb();
             assertEquals(GradesManagerDb.SUBJECTS_COLLECTION_NAME, gradesManagerDb.getSubjectsCollection().getDBCollection().getName());
         }
-
 
         @Test
         public void givenCollectionSize2WhenCountStudentThen2() {
@@ -211,6 +221,34 @@ public class GradesManagerDbSpec {
             doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
             doReturn(0L).when(jongoMock).count(anyString());
             assertEquals(0, gradesManagerDb.countSubjects());
+        }
+    }
+
+    @Nested
+    class Other {
+        @BeforeEach
+        public void initialize(){
+            doReturn(jongoMock).when(gradesManagerDb).getStudentsCollection();
+            doReturn(jongoMock).when(gradesManagerDb).getSubjectsCollection();
+            doReturn(mock(Update.class)).when(jongoMock).update(anyString(), any(Object.class));
+        }
+
+        @Test
+        public void whenAddGradeForNotExistingStudentThenFalse() {
+            doReturn(false).when(gradesManagerDb).existInDb(any(Student.class));
+            doReturn(true).when(gradesManagerDb).existInDb(any(Subject.class));
+            Student student = new Student("John", "Carter");
+            Subject subject = new Subject("Biology");
+            assertFalse(gradesManagerDb.addGrade(student, subject, 2));
+        }
+
+        @Test
+        public void whenAddGradeForNotExistingSubjectThenFalse() {
+            doReturn(true).when(gradesManagerDb).existInDb(any(Student.class));
+            doReturn(false).when(gradesManagerDb).existInDb(any(Subject.class));
+            Student student = new Student("John", "Carter");
+            Subject subject = new Subject("Biology");
+            assertFalse(gradesManagerDb.addGrade(student, subject, 2));
         }
     }
 }
