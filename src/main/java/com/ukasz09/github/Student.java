@@ -40,11 +40,9 @@ public class Student extends Entity {
         return Objects.hash(name, surname);
     }
 
-    public boolean addGrade(Subject subject, int i) {
-        if (Subject.AVAILABLE_GRADES.contains(i)) {
-            // TODO: 30.05.2020 add connection with db
-            return true;
-        }
+    public boolean addGrade(Subject subject, int grade) {
+        if (Subject.AVAILABLE_GRADES.contains(grade))
+            return dbManager.addGrade(this, subject, grade);
         return false;
     }
 
@@ -53,5 +51,10 @@ public class Student extends Entity {
         if (PATTERN.matcher(name).matches() && PATTERN.matcher(surname).matches())
             return dbManager.add(this);
         return false;
+    }
+
+    @Override
+    public boolean delete() {
+        return dbManager.delete(this);
     }
 }

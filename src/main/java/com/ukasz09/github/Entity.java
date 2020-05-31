@@ -5,4 +5,6 @@ public abstract class Entity {
 
     //----------------------------------------------------------------------------------------------------------------//
     public abstract boolean add();
+
+    public abstract boolean delete();
 }

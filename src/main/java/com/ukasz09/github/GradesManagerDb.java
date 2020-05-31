@@ -6,7 +6,15 @@ import com.mongodb.MongoException;
 import org.jongo.FindOne;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
+import org.jongo.MongoCursor;
+import org.jongo.marshall.jackson.oid.MongoId;
+import org.jongo.marshall.jackson.oid.MongoObjectId;
+import org.jongo.marshall.jackson.oid.ObjectId;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -18,6 +26,16 @@ public class GradesManagerDb {
     private MongoCollection studentsCollection;
     private MongoCollection subjectsCollection;
     private DB db;
+
+    //----------------------------------------------------------------------------------------------------------------//
+    private static class GradeBean {
+        @MongoObjectId
+        String _id;
+        Map<String, Integer[]> grades;
+
+        private GradeBean() {
+        }
+    }
 
     //----------------------------------------------------------------------------------------------------------------//
     public GradesManagerDb() {
@@ -101,24 +119,38 @@ public class GradesManagerDb {
     public boolean addGrade(Student student, Subject subject, int grade) {
         if (existInDb(student) && existInDb(subject)) {
             String idQuery = "{name: #, surname: #}";
-            String pushQuery = "{$push: {grades: {#:#}}}";
+            String pushQuery = "{$push:{grades.#:#}}";
             getStudentsCollection().update(idQuery, student.getName(), student.getSurname()).with(pushQuery, subject.getName(), grade);
             return true;
         }
         return false;
     }
 
-    protected Iterable<Integer> getGrades(Student student, Subject subject) {
+    protected ArrayList<Integer> getGrades(Student student, Subject subject) {
+        ArrayList<Integer> gradesList = new ArrayList<>();
         if (existInDb(student) && existInDb(subject)) {
-            String query = "{name: #, surname: #,grades:{#}}";
-            return getStudentsCollection().find(query, student.getName(), student.getSurname(), subject.getName()).as(Integer.class);
+            String findQuery = "{name:#, surname:#, grades.# : { $exists: true, $ne: [] } }";
+            String projectionQuery = "{grades.#:1}";
+            GradeBean bean = getStudentsCollection()
+                    .findOne(findQuery, student.getName(), student.getSurname(), subject.getName())
+                    .projection(projectionQuery, subject.getName()).as(GradeBean.class);
+            gradesList = parseBeanToList(bean);
         }
-        return null;
+        return gradesList;
+    }
+
+    private ArrayList<Integer> parseBeanToList(GradeBean bean) {
+        ArrayList<Integer> gradesList = new ArrayList<>(0);
+        if (bean != null && !bean.grades.isEmpty()) {
+            Map.Entry<String, Integer[]> entry = bean.grades.entrySet().iterator().next();
+            gradesList = new ArrayList<>(Arrays.asList(entry.getValue()));
+        }
+        return gradesList;
     }
 
     public double avgGrade(Student student, Subject subject) {
-        Iterable<Integer> grades = getGrades(student, subject);
-        if (grades != null) {
+        ArrayList<Integer> grades = getGrades(student, subject);
+        if (!grades.isEmpty()) {
             double sum = 0;
             int qty = 0;
             for (Integer grade : grades) {

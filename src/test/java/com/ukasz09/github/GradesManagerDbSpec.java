@@ -312,7 +312,7 @@ public class GradesManagerDbSpec {
 
         @Test
         public void givenGradesNullThen0() {
-            doReturn(null).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
+            doReturn(new ArrayList<Integer>()).when(dbSpy).getGrades(any(Student.class), any(Subject.class));
             Subject subject = new Subject("Biology", dbSpy);
             Student student = new Student("John", "Carter", dbSpy);
             assertEquals(0d, dbSpy.avgGrade(student, subject));
