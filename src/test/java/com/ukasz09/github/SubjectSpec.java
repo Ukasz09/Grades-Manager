@@ -27,10 +27,17 @@ public class SubjectSpec {
         }
 
         @Test
-        public void givenTwoStudentsWhenDifferentNameThenNotEqual() {
+        public void givenTwoSubjectsWhenDifferentNameThenNotEqual() {
             Subject s1 = new Subject("Math", dbSpy);
             Subject s2 = new Subject("Biology", dbSpy);
             assertNotEquals(s1, s2);
+        }
+
+        @Test
+        public void givenTwoSubjectEqualWhenHashCodeCompareThenTheSame() {
+            Subject s1 = new Subject("Math", dbSpy);
+            Subject s2 = new Subject("Math", dbSpy);
+            assertEquals(s1.hashCode(), s2.hashCode());
         }
     }
 

@@ -3,20 +3,13 @@ package com.ukasz09.github;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
-import org.jongo.FindOne;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import org.jongo.MongoCursor;
-import org.jongo.marshall.jackson.oid.MongoId;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
-import org.jongo.marshall.jackson.oid.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 public class GradesManagerDb {
     protected static final String DATABASE_NAME = "GradesManager";
@@ -165,11 +158,15 @@ public class GradesManagerDb {
 
     public boolean dropDb() {
         try {
-            db.dropDatabase();
+            getDb().dropDatabase();
             return true;
         } catch (MongoException e) {
             Logger.logError(getClass(), e);
             return false;
         }
+    }
+
+    protected DB getDb() {
+        return db;
     }
 }

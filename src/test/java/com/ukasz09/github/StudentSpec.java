@@ -45,6 +45,13 @@ public class StudentSpec {
             Student s2 = new Student("John", "Carter", dbSpy);
             assertEquals(s1, s2);
         }
+
+        @Test
+        public void givenTwoStudentsEqualWhenHashCodeCompareThenTheSame() {
+            Student s1 = new Student("John", "Carter", dbSpy);
+            Student s2 = new Student("John", "Carter", dbSpy);
+            assertEquals(s1.hashCode(), s2.hashCode());
+        }
     }
 
     @Nested

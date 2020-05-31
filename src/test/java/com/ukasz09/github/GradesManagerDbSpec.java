@@ -1,5 +1,6 @@
 package com.ukasz09.github;
 
+import com.mongodb.DB;
 import com.mongodb.MongoException;
 import org.jongo.MongoCollection;
 import org.jongo.Update;
@@ -44,6 +45,14 @@ public class GradesManagerDbSpec {
         public void whenInstantiatedThenMongoSubjectsCollectionHasProperName() {
             dbSpy = new GradesManagerDb();
             assertEquals(GradesManagerDb.SUBJECTS_COLLECTION_NAME, dbSpy.getSubjectsCollection().getDBCollection().getName());
+        }
+
+        @Test
+        public void givenExceptionWhenDropDatabaseThenFalse() {
+            DB getDbMock = mock(DB.class);
+            doReturn(getDbMock).when(dbSpy).getDb();
+            doThrow(MongoException.class).when(getDbMock).dropDatabase();
+            assertFalse(dbSpy.dropDb());
         }
     }
 
@@ -257,6 +266,11 @@ public class GradesManagerDbSpec {
             public void givenOneSubjectInCollectionWhenDeleteThisSubjectThenTrue() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
+                doReturn(jongoMock).when(dbSpy).getSubjectsCollection();
+                doReturn(jongoMock).when(dbSpy).getStudentsCollection();
+                Update updateMock = mock(Update.class);
+                doReturn(updateMock).when(jongoMock).update(anyString());
+                doReturn(updateMock).when(updateMock).multi();
                 dbSpy.add(new Subject("Biology", dbSpy));
                 assertTrue(dbSpy.delete(new Subject("Biology", dbSpy)));
             }

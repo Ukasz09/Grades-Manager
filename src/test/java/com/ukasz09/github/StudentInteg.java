@@ -27,7 +27,7 @@ public class StudentInteg {
 
     @Test
     public void whenDropDbThenCollectionsEmpty() {
-        dbManager.dropDb();
+        assertTrue(dbManager.dropDb());
         assertEquals(0L, dbManager.getStudentsCollection().count());
         assertEquals(0L, dbManager.getSubjectsCollection().count());
     }
