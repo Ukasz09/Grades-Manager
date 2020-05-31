@@ -42,4 +42,8 @@ public class Subject {
             return managerDb.add(this);
         return false;
     }
+
+    public boolean delete() {
+        return managerDb.delete(this);
+    }
 }

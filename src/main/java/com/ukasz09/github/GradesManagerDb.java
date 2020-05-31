@@ -102,7 +102,10 @@ public class GradesManagerDb {
         if (existInDb(subject)) {
             String subjQuery = "{name: #}";
             getSubjectsCollection().remove(subjQuery, subject.getName());
-            getStudentsCollection().remove("{grades: #}", subject.getName());
+            getStudentsCollection()
+                    .update("{}")
+                    .multi()
+                    .with("{ $unset: { grades.#: { $exists: true, $ne: [] } } }", subject.getName());
             return true;
         }
         return false;
@@ -127,15 +130,13 @@ public class GradesManagerDb {
     }
 
     protected ArrayList<Integer> getGrades(Student student, Subject subject) {
-        ArrayList<Integer> gradesList = new ArrayList<>();
-        if (existInDb(student) && existInDb(subject)) {
-            String findQuery = "{name:#, surname:#, grades.# : { $exists: true, $ne: [] } }";
-            String projectionQuery = "{grades.#:1}";
-            GradeBean bean = getStudentsCollection()
-                    .findOne(findQuery, student.getName(), student.getSurname(), subject.getName())
-                    .projection(projectionQuery, subject.getName()).as(GradeBean.class);
-            gradesList = parseBeanToList(bean);
-        }
+        ArrayList<Integer> gradesList;
+        String findQuery = "{name:#, surname:#, grades.# : { $exists: true, $ne: [] } }";
+        String projectionQuery = "{grades.#:1}";
+        GradeBean bean = getStudentsCollection()
+                .findOne(findQuery, student.getName(), student.getSurname(), subject.getName())
+                .projection(projectionQuery, subject.getName()).as(GradeBean.class);
+        gradesList = parseBeanToList(bean);
         return gradesList;
     }
 
@@ -167,6 +168,7 @@ public class GradesManagerDb {
             db.dropDatabase();
             return true;
         } catch (MongoException e) {
+            Logger.logError(getClass(), e);
             return false;
         }
     }
