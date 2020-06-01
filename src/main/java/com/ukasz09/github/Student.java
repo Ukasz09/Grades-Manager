@@ -57,4 +57,8 @@ public class Student extends Entity {
     public boolean delete() {
         return dbManager.delete(this);
     }
+
+    public double avgGrade(Subject subject) {
+        return dbManager.avgGrade(this, subject);
+    }
 }

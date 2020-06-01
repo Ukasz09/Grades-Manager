@@ -4,10 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -134,6 +131,68 @@ public class StudentInteg {
     }
 
     @Nested
+    class GradesGetting {
+        @Test
+        public void givenNoGradesWhenGetGradesThenEmpty() {
+            Student student = new Student("Jonny", "Cart", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            assertTrue(dbManager.getGrades(student, subject).isEmpty());
+        }
+
+        @Test
+        public void given3GradesForSubjectWhenGetGradesForOtherSubjectThenEmpty() {
+            Student student = new Student("Jonny", "Cart", dbManager);
+            Subject subject = new Subject("Math", dbManager);
+            student.add();
+            subject.add();
+            student.addGrade(subject, 3);
+            student.addGrade(subject, 2);
+            student.addGrade(subject, 4);
+            assertTrue(dbManager.getGrades(student, new Subject("Biology", dbManager)).isEmpty());
+        }
+
+        @Test
+        public void givenGradesFor2SubjectsWhenGetGradesForOneOfThemThenProperResults() {
+            Student student = new Student("Jonny", "Cart", dbManager);
+            student.add();
+            Subject subject1 = new Subject("Math", dbManager);
+            subject1.add();
+            Subject subject2 = new Subject("Biology", dbManager);
+            subject2.add();
+            student.addGrade(subject1, 3);
+            student.addGrade(subject1, 2);
+            student.addGrade(subject1, 4);
+            student.addGrade(subject2, 4);
+            student.addGrade(subject2, 4);
+            assertEquals(3, dbManager.getGrades(student, subject1).size());
+            List<Integer> actual = dbManager.getGrades(student, subject1);
+            Collections.sort(actual);
+            assertEquals(Arrays.asList(2, 3, 4), actual);
+        }
+
+        @Test
+        public void givenGradesFor1SubjectsAnd2StudentsWhenGetGradesForOneOfThemThenProperResults() {
+            Student student1 = new Student("Jonny", "Cart", dbManager);
+            student1.add();
+            Student student2 = new Student("Stephan", "Jimis", dbManager);
+            student2.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student1.addGrade(subject, 3);
+            student1.addGrade(subject, 2);
+            student2.addGrade(subject, 4);
+            student2.addGrade(subject, 4);
+            student2.addGrade(subject, 4);
+            assertEquals(2, dbManager.getGrades(student1, subject).size());
+            List<Integer> actual = dbManager.getGrades(student1, subject);
+            Collections.sort(actual);
+            assertEquals(Arrays.asList(2, 3), actual);
+        }
+    }
+
+    @Nested
     class AddGrades {
         @Test
         public void givenEmptyCollectionWhenAddGradeThenNoChanges() {
@@ -246,6 +305,119 @@ public class StudentInteg {
             ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(3, 3, 3, 3));
             ArrayList<Integer> actual = dbManager.getGrades(student, subject);
             assertEquals(expected, actual);
+        }
+    }
+
+    @Nested
+    class Avg {
+        @Test
+        public void givenNoStudentsInCollectionWhenAvgThen0() {
+            Subject subject = new Subject("Biology", dbManager);
+            subject.add();
+            assertEquals(0d, new Student("Joshua", "Carter", dbManager).avgGrade(subject));
+        }
+
+        @Test
+        public void given1StudentsInCollectionWhenAvgOfDifferentStudentThen0() {
+            Subject subject = new Subject("Biology", dbManager);
+            subject.add();
+            new Student("Monica", "Bellini", dbManager).add();
+            assertEquals(0d, new Student("Joshua", "Carter", dbManager).avgGrade(subject));
+        }
+
+        @Test
+        public void givenEmptySubjectsAnd1StudentInCollectionWhenAvgThen0() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            assertEquals(0d, student.avgGrade(new Subject("Math", dbManager)));
+        }
+
+        @Test
+        public void given1SubjectsAnd1StudentInCollectionAndNoGradesWhenAvgThen0() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            assertEquals(0d, student.avgGrade(subject));
+        }
+
+        @Test
+        public void given1GradeForGivenSubjectWhenAvgThenThisGrade() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student.addGrade(subject, 4);
+            assertEquals(4d, student.avgGrade(subject));
+        }
+
+        @Test
+        public void given1GradeForOtherSubjectWhenAvgWithDifferentSubjectThen0() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student.addGrade(subject, 4);
+            assertEquals(0, student.avgGrade(new Subject("Biology", dbManager)));
+        }
+
+        @Test
+        public void given4GradeFor1SubjectWhenAvgWithThenProperResult() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student.addGrade(subject, 4);
+            student.addGrade(subject, 2);
+            student.addGrade(subject, 3);
+            student.addGrade(subject, 3);
+            assertEquals(3d, student.avgGrade(subject));
+        }
+
+        @Test
+        public void given3GradeFor1SubjectWhenAvgWithThenProperResult() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student.addGrade(subject, 2);
+            student.addGrade(subject, 2);
+            student.addGrade(subject, 3);
+            assertEquals(7d / 3d, student.avgGrade(subject));
+        }
+
+        @Test
+        public void given2SubjectWithGradesWhenAvgThenResultOnlyWithGradesFromOneSubject() {
+            Student student = new Student("Monica", "Belluci", dbManager);
+            student.add();
+            Subject subject1 = new Subject("Math", dbManager);
+            Subject subject2 = new Subject("Biology", dbManager);
+            subject1.add();
+            subject2.add();
+            student.addGrade(subject1, 2);
+            student.addGrade(subject1, 2);
+            student.addGrade(subject1, 2);
+            student.addGrade(subject2, 2);
+            student.addGrade(subject2, 2);
+            student.addGrade(subject1, 3);
+            assertEquals(9d / 4d, student.avgGrade(subject1));
+        }
+
+        @Test
+        public void given1SubjectAnd2StudentWithGradesFromItWhenAvgThenProperResult() {
+            Student student1 = new Student("Monica", "Belluci", dbManager);
+            Student student2 = new Student("Anthony", "Hopkins", dbManager);
+            student1.add();
+            student2.add();
+            Subject subject = new Subject("Math", dbManager);
+            subject.add();
+            student1.addGrade(subject, 2);
+            student1.addGrade(subject, 2);
+            student1.addGrade(subject, 3);
+            student2.addGrade(subject, 2);
+            student2.addGrade(subject, 2);
+            student2.addGrade(subject, 3);
+            assertEquals(7d / 3d, student1.avgGrade(subject));
         }
     }
 }

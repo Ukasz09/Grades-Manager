@@ -10,6 +10,7 @@ import org.jongo.marshall.jackson.oid.MongoObjectId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class GradesManagerDb {
     protected static final String DATABASE_NAME = "GradesManager";
@@ -145,13 +146,8 @@ public class GradesManagerDb {
     public double avgGrade(Student student, Subject subject) {
         ArrayList<Integer> grades = getGrades(student, subject);
         if (!grades.isEmpty()) {
-            double sum = 0;
-            int qty = 0;
-            for (Integer grade : grades) {
-                sum += grade;
-                qty++;
-            }
-            return qty == 0 ? 0d : sum / qty;
+            double sum = grades.stream().mapToInt(Integer::intValue).sum();
+            return sum / grades.size();
         }
         return 0d;
     }
