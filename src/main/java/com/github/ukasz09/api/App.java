@@ -39,7 +39,7 @@ public class App {
     }
 
     protected String doAddOperation(String[] params) {
-        if (params[1] == null)
+        if (params.length < 2 || params[1] == null)
             return INCORRECT;
         if (params[1].equals("student"))
             return addStudent(params);
@@ -49,7 +49,7 @@ public class App {
     }
 
     protected String addStudent(String[] params) {
-        if (params[2] == null || params[3] == null)
+        if (params.length < 4 || params[2] == null || params[3] == null)
             return INCORRECT;
         String name = params[2];
         String surname = params[3];
@@ -58,7 +58,7 @@ public class App {
     }
 
     protected String addSubject(String[] params) {
-        if (params[2] == null)
+        if (params.length < 3 || params[2] == null)
             return INCORRECT;
         String name = params[2];
         boolean result = new Subject(name, getDbManager()).add();
@@ -70,7 +70,7 @@ public class App {
     }
 
     protected String doDelOperation(String[] params) {
-        if (params[1] == null)
+        if (params.length < 2 || params[1] == null)
             return INCORRECT;
         if (params[1].equals("student"))
             return delStudent(params);
@@ -80,7 +80,7 @@ public class App {
     }
 
     protected String delStudent(String[] params) {
-        if (params[2] == null || params[3] == null)
+        if (params.length < 4 || params[2] == null || params[3] == null)
             return INCORRECT;
         String name = params[2];
         String surname = params[3];
@@ -89,7 +89,7 @@ public class App {
     }
 
     protected String delSubject(String[] params) {
-        if (params[2] == null)
+        if (params.length < 3 || params[2] == null)
             return INCORRECT;
         String name = params[2];
         boolean result = new Subject(name, getDbManager()).delete();
@@ -97,7 +97,7 @@ public class App {
     }
 
     protected String doCountOperation(String[] params) {
-        if (params[1] == null)
+        if (params.length < 2 || params[1] == null)
             return INCORRECT;
         if (params[1].equals("students"))
             return String.valueOf(getDbManager().countStudents());
@@ -107,7 +107,7 @@ public class App {
     }
 
     protected String doSetOperation(String[] params) {
-        if (params[1] != null && params[1].equals("grade")) {
+        if (params.length < 2 || params[1] != null && params[1].equals("grade")) {
             String studName = params[2];
             String studSurname = params[3];
             String subjName = params[4];
