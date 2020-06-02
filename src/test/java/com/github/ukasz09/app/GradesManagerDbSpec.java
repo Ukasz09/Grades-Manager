@@ -36,19 +36,19 @@ public class GradesManagerDbSpec {
         }
 
         @Test
-        public void whenInstantiatedThenMongoStudentsCollectionHasProperName() {
+        public void whenInstantiatedThenStudentsCollectionHasProperName() {
             dbSpy = new GradesManagerDb();
             assertEquals(GradesManagerDb.STUDENTS_COLLECTION_NAME, dbSpy.getStudentsCollection().getDBCollection().getName());
         }
 
         @Test
-        public void whenInstantiatedThenMongoSubjectsCollectionHasProperName() {
+        public void whenInstantiatedThenSubjectsCollectionHasProperName() {
             dbSpy = new GradesManagerDb();
             assertEquals(GradesManagerDb.SUBJECTS_COLLECTION_NAME, dbSpy.getSubjectsCollection().getDBCollection().getName());
         }
 
         @Test
-        public void givenExceptionWhenDropDatabaseThenFalse() {
+        public void givenExceptionWhenDropDbThenFalse() {
             DB getDbMock = mock(DB.class);
             doReturn(getDbMock).when(dbSpy).getDb();
             doThrow(MongoException.class).when(getDbMock).dropDatabase();
@@ -255,7 +255,7 @@ public class GradesManagerDbSpec {
             }
 
             @Test
-            public void givenOneSubjectInCollectionWhenDeleteDifferentSubjectThenFalse() {
+            public void given1SubjectInCollectionWhenDeleteDifferentSubjectThenFalse() {
                 doReturn(false).when(dbSpy).existInDb(any(Student.class));
                 doReturn(false).when(dbSpy).existInDb(any(Subject.class));
                 dbSpy.add(new Subject("Biology", dbSpy));
@@ -263,7 +263,7 @@ public class GradesManagerDbSpec {
             }
 
             @Test
-            public void givenOneSubjectInCollectionWhenDeleteThisSubjectThenTrue() {
+            public void given1SubjectInCollectionWhenDeleteThisSubjectThenTrue() {
                 doReturn(true).when(dbSpy).existInDb(any(Student.class));
                 doReturn(true).when(dbSpy).existInDb(any(Subject.class));
                 doReturn(jongoMock).when(dbSpy).getSubjectsCollection();

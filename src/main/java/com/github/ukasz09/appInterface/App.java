@@ -1,12 +1,9 @@
-package com.github.ukasz09.api;
+package com.github.ukasz09.appInterface;
 
 import com.github.ukasz09.app.GradesManagerDb;
 import com.github.ukasz09.app.Logger;
 import com.github.ukasz09.app.Student;
 import com.github.ukasz09.app.Subject;
-
-import java.util.Scanner;
-import java.util.logging.Level;
 
 public class App {
     private GradesManagerDb dbManager = new GradesManagerDb();
@@ -33,6 +30,8 @@ public class App {
                 return doSetOperation(params);
             case "average":
                 return calcAvg(params);
+            case "clear":
+                dbManager.dropDb();
             default:
                 return INCORRECT;
         }

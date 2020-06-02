@@ -94,7 +94,7 @@ public class SubjectInteg {
         }
 
         @Test
-        public void given1SubjectInCollectionAndOneStudentWithGradesFromItWhenRemoveThisSubjectThenRemovedFormAll() {
+        public void given1SubjectInCollectionAnd1StudentWithGradesFromItWhenRemoveThisSubjectThenRemovedFromAll() {
             Subject subject = new Subject("Biology", dbManager);
             subject.add();
             Student student = new Student("Joshua", "Carter", dbManager);
@@ -110,7 +110,7 @@ public class SubjectInteg {
         }
 
         @Test
-        public void given2SubjectInCollectionAndOneStudentWithGradesFromItWhenRemoveOnOfSubjectsThenRemovedFormAll() {
+        public void given2SubjectsInCollectionAnd1StudentsWithGradesFromItWhenRemoveOnOfSubjectsThenRemovedFromAll() {
             Subject subject1 = new Subject("Biology", dbManager);
             Subject subject2 = new Subject("Math", dbManager);
             subject1.add();
@@ -133,7 +133,7 @@ public class SubjectInteg {
         }
 
         @Test
-        public void given2SubjectInCollectionAnd2StudentWithGradesFromItWhenRemoveOnOfSubjectsThenRemovedFormAll() {
+        public void given2SubjectsInCollectionAnd2StudentsWithGradesFromItWhenRemove1OfSubjectsThenRemovedFormAll() {
             Subject subject1 = new Subject("Biology", dbManager);
             Subject subject2 = new Subject("Math", dbManager);
             subject1.add();

@@ -1,4 +1,4 @@
-package com.github.ukasz09.api;
+package com.github.ukasz09.appInterface;
 
 import com.github.ukasz09.app.GradesManagerDb;
 import com.github.ukasz09.app.Student;

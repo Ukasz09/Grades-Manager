@@ -57,7 +57,7 @@ public class StudentInteg {
         }
 
         @Test
-        public void givenNotEmptyCollectionWhenAddStudentWithOnlyTheSameNameThenAdded() {
+        public void givenNotEmptyCollectionWhenAddStudentWithTheSameNameThenAdded() {
             new Student("John", "Carter", dbManager).add();
             assertTrue(new Student("Johny", "Dicaprio", dbManager).add());
             assertEquals(2, dbManager.countStudents());
@@ -66,7 +66,7 @@ public class StudentInteg {
         }
 
         @Test
-        public void givenNotEmptyCollectionWhenAddStudentWithTheOnlySameSurnameThenAdded() {
+        public void givenNotEmptyCollectionWhenAddStudentWithTheSameSurnameThenAdded() {
             new Student("John", "Carter", dbManager).add();
             assertTrue(new Student("Eleonore", "Carter", dbManager).add());
             assertEquals(2, dbManager.countStudents());
@@ -102,7 +102,7 @@ public class StudentInteg {
         }
 
         @Test
-        public void given3StudentsInCollectionWhenDeleteOneOfThemThenDeleted() {
+        public void given3StudentsInCollectionWhenDelete1OfThemThenDeleted() {
             new Student("John", "Carter", dbManager).add();
             new Student("Penelope", "Garsia", dbManager).add();
             new Student("Emily", "Blunt", dbManager).add();
@@ -154,7 +154,7 @@ public class StudentInteg {
         }
 
         @Test
-        public void givenGradesFor2SubjectsWhenGetGradesForOneOfThemThenProperResults() {
+        public void givenGradesFor2SubjectsWhenGetGradesFor1OfThemThenProperResults() {
             Student student = new Student("Jonny", "Cart", dbManager);
             student.add();
             Subject subject1 = new Subject("Math", dbManager);
@@ -173,7 +173,7 @@ public class StudentInteg {
         }
 
         @Test
-        public void givenGradesFor1SubjectsAnd2StudentsWhenGetGradesForOneOfThemThenProperResults() {
+        public void givenGradesFor1SubjectsAnd2StudentsWhenGetGradesFor1OfThemThenProperResults() {
             Student student1 = new Student("Jonny", "Cart", dbManager);
             student1.add();
             Student student2 = new Student("Stephan", "Jimis", dbManager);
