@@ -144,7 +144,9 @@ public class App {
         String subjName = params[3];
         if (studName != null && studSurname != null && subjName != null) {
             Subject subject = new Subject(subjName, getDbManager());
-            return String.valueOf(new Student(studName, studSurname, getDbManager()).avgGrade(subject));
+            double avg = new Student(studName, studSurname, getDbManager()).avgGrade(subject);
+            avg = Math.round(avg * 10d) / 10d;
+            return String.valueOf(avg);
         }
         return String.valueOf(0d);
     }
