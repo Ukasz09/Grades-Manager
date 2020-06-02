@@ -31,7 +31,7 @@ public class App {
             case "average":
                 return calcAvg(params);
             case "clear":
-                dbManager.dropDb();
+                return getStringResult(dbManager.dropDb());
             default:
                 return INCORRECT;
         }
