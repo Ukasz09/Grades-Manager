@@ -58,7 +58,7 @@ public class StudentSpec {
     class Adding {
         @Test
         public void whenAddGradeWithIncorrectGradeValueThenFalse() {
-            Student student = new Student("John", "Carter", dbSpy);
+            Student student = new Student("Johny", "Carter", dbSpy);
             Subject subject = new Subject("Biology", dbSpy);
             assertFalse(student.addGrade(subject, 1));
             assertFalse(student.addGrade(subject, 6));

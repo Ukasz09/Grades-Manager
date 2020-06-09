@@ -96,7 +96,7 @@ public class StudentInteg {
             new Student("John", "Carter", dbManager).add();
             new Student("Penelope", "Garsia", dbManager).add();
             new Student("Emily", "Blunt", dbManager).add();
-            assertFalse(new Student("Johnny", "Bravo", dbManager).delete());
+            assertFalse(new Student("Johnny", "Bravos", dbManager).delete());
             assertEquals(3, dbManager.countStudents());
             assertFalse(dbManager.existInDb(new Student("Johnny", "Bravo", dbManager)));
         }
