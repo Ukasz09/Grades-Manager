@@ -4,7 +4,7 @@ Simplified grades manager made for university classes. Main idea of project has 
 
 ## About
 
-Implemented code was intendeed to comply imposed on specification and give interface which allowed to run this commands:
+Implemented code was intend to comply imposed on specification and give interface which allowed to run this commands:
 
 - `<main_app_path> student <name> <nazwisko>` - adding new student to database  
 - `<main_app_path> add subject <subject_name>` - adding new subject to database
@@ -42,7 +42,7 @@ MongoDB as a database was used mainly for educational purpose. In this case over
 In order to mock DB dependencies in unit tests, have been applied mocks and spies with *Mockito* library
 
 
-### Total code coverage:**
+### **Total code coverage:**
 - **Classes:** 100%
 - **Methods:** 96,6%
 - **Lines of code:** 97,2%
@@ -96,7 +96,7 @@ You can run acceptance tests by using `acceptance_tests.sh`.
 ./acceptance_tests.sh <path to main app file>
 ```
 
-You can pass ass argument any app implementation which is comply with API mentioned in ([About](https://github.com/Ukasz09/Grades-Manager#about)) section. Test will generate results for every tests and summary report. For example:
+Script takes as an argument path to any app implementation, which is comply with API mentioned in ([About](https://github.com/Ukasz09/Grades-Manager#about)) section. Test will generate results for every tests and summary report. For example:
 
 ![acceptance_tests](/readme_images/acceptance_summary.png)
 
